@@ -3,6 +3,14 @@
 #include <string.h>
 #include <stdbool.h>
 
+#define MAX_LABEL_SIZE 100
+#define MAX_LABELS 100
+
+typedef struct labelInfo {
+    int address;
+    char *name;
+} Label;
+
 bool getType(char *line, int instruction, int *branchAddress) {
     int Rm = (instruction >> 16) & 0x1F;
     int shamt = (instruction >> 10) & 0x3F;
@@ -161,8 +169,16 @@ int main(int argc, char *argv[]) {
 
     char *output;
     int instruction;
-    
 
+    
+    //Keep track of the line number
+    int lineNumber = 1;
+
+    //Keep track of label line numbers
+    Label *labels;
+    labels = malloc(sizeof(Label) * MAX_LABELS);
+
+    int i = 0;
     //Find where the labels are at
     while (!feof(file)) {
         fread(&instruction, 4, 1, file);
@@ -172,10 +188,20 @@ int main(int argc, char *argv[]) {
         char dummyLine[32];
         if (getType(dummyLine, instruction, &branchTargetLine)) {
             // Store what line the branch target is on
+            char name[MAX_LABEL_SIZE];
+            sprintf(name, "Label %d:", lineNumber);
+            Label newLabel = {branchTargetLine + lineNumber, name};
+
+            // Add the label to the list
+            labels[i++] = newLabel;
+
         }
+        lineNumber++;
     }
 
+    // Rewind the file and start counting lines
     rewind(file);
+    lineNumber = 1;
 
     while (!feof(file)) {
         fread(&instruction, 4, 1, file);
@@ -188,4 +214,8 @@ int main(int argc, char *argv[]) {
         output = strcat(output, line);
 
     }
+
+    // Free the memory #FreeMyBoyLabels
+    free(labels);
+    fclose(file);
 }
