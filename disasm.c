@@ -28,11 +28,11 @@ bool getType(char *line, int instruction) {
     int Rm = (instruction >> 16) & 0x1F;
     int shamt = (instruction >> 10) & 0x3F;
     int Rn = (instruction >> 5) & 0x1F;
-    int Rd = (instruction >> 5) & 0x1F;
+    int Rd = instruction & 0x1F;
     int ALUImm = (instruction >> 10) & 0xFFF;
     int DTAdd = (instruction >> 12) & 0x1FF;
     int op = (instruction >> 10) & 0x3;
-    int Rt = (instruction >> 5) & 0x1F;
+    int Rt = instruction & 0x1F;
     int BAdd = instruction & 0x3FFFFFF;
     int CBAdd = (instruction >> 5) & 0x7FFFF;
 
