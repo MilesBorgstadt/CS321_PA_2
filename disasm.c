@@ -38,7 +38,12 @@ bool getType(char *line, int instruction) {
     // switch for 6-bit opcodes
     int opcode = (instruction >> 26) & 0x3F;
     switch(opcode) {
-        case 0b000101: //B
+        case 0b000101:
+            sprintf(line, "B %d", BAdd);
+            return true;
+        case 0b100101:
+            sprintf(line, "BL %d", BAdd);
+            return true;
     }
 
     // switch for 8-bit opcodes
