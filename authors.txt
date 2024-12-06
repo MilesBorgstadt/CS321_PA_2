@@ -1,3 +1,4 @@
 Miles Borgstadt: milesb
 Adam Lee: adamal22
 Savannah Franklin: sf03
+https://stackoverflow.com/questions/23919953/fetch-32bit-instruction-from-binary-file-in-c
