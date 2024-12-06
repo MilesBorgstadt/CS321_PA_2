@@ -38,15 +38,18 @@ bool getType(char *line, int instruction) {
     // switch for 6-bit opcodes
     int opcode = (instruction >> 26) & 0x3F;
     switch(opcode) {
-        case 0b000101:       //B
+        case 0b000101:       // B
         case 0b100101:       // BL
+            return true;
     }
 
     // switch for 8-bit opcodes
     opcode = (instruction >> 24) & 0xFF;
     switch(opcode) {
         case 0b10110101:     // CBNZ
-        case 0b10110100:     // CBZ   
+        case 0b10110100:     // CBZ
+        case 0b01010100:     // B.cond
+            return true;   
     }
 
     // switch for 10-bit opcodes
@@ -58,6 +61,7 @@ bool getType(char *line, int instruction) {
         case 0b1011001000:   // ORRI
         case 0b1001000100:   // ADDI
         case 0b1001001000:   // ANDI
+            return false;
     }
 
     // switch for 11-bit opcodes
@@ -65,7 +69,6 @@ bool getType(char *line, int instruction) {
     switch(opcode) {
         case 0b10001011000:  // ADD
         case 0b10001010000:  // AND
-        case 0b10110110001:  // B.cond
         case 0b11010110000:  // BR
         case 0b11001010000:  // EOR
         case 0b11111000010:  // LDUR
@@ -79,5 +82,8 @@ bool getType(char *line, int instruction) {
         case 0b11111111100:  // PRNL
         case 0b11111111110:  // DUMP
         case 0b11111111111:  // HALT
+            return false;
     }
+
+    return false;
 }
