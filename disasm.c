@@ -24,7 +24,7 @@ int main(int argc, char *argv[]) {
 }
 
 bool getType(char *line, int instruction) {
-    int opcode = (instruction >> 26) & 0x3F;
+    int opcode = (instruction >> 21) & 0x7FF;
     int Rm = (instruction >> 16) & 0x1F;
     int shamt = (instruction >> 10) & 0x3F;
     int Rn = (instruction >> 5) & 0x1F;
