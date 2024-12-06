@@ -3,26 +3,6 @@
 #include <string.h>
 #include <stdbool.h>
 
-int main(int argc, char *argv[]) {
-    FILE *file;
-    file = fopen(argv[1], "rb");
-
-    char *output;
-    int instruction;
-    
-    
-    while (!feof(file)) {
-        fread(&instruction, 4, 1, file);
-        instruction = be32toh(instruction);
-
-        char line[21];
-        bool branch = getType(line, instruction);
-        output = realloc(output, sizeof(output) + strlen(line));
-        output = strcat(output, line);
-
-    }
-}
-
 bool getType(char *line, int instruction) {
     int Rm = (instruction >> 16) & 0x1F;
     int shamt = (instruction >> 10) & 0x3F;
@@ -168,4 +148,24 @@ bool getType(char *line, int instruction) {
     }
 
     return false;
+}
+
+int main(int argc, char *argv[]) {
+    FILE *file;
+    file = fopen(argv[1], "rb");
+
+    char *output;
+    int instruction;
+    
+    
+    while (!feof(file)) {
+        fread(&instruction, 4, 1, file);
+        instruction = be32toh(instruction);
+
+        char line[21];
+        bool branch = getType(line, instruction);
+        output = realloc(output, sizeof(output) + strlen(line));
+        output = strcat(output, line);
+
+    }
 }
