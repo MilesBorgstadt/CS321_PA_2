@@ -24,7 +24,6 @@ int main(int argc, char *argv[]) {
 }
 
 bool getType(char *line, int instruction) {
-    int opcode = (instruction >> 21) & 0x7FF;
     int Rm = (instruction >> 16) & 0x1F;
     int shamt = (instruction >> 10) & 0x3F;
     int Rn = (instruction >> 5) & 0x1F;
@@ -36,13 +35,31 @@ bool getType(char *line, int instruction) {
     int BAdd = instruction & 0x3FFFFFF;
     int CBAdd = (instruction >> 5) & 0x7FFFF;
 
+    // switch for 6-bit opcodes
+    int opcode = (instruction >> 26) & 0x3F;
+    switch(opcode) {
+        case 0b000101: //B
+    }
+
+    // switch for 8-bit opcodes
+    opcode = (instruction >> 24) & 0xFF;
+    switch(opcode) {
+    }
+
+    // switch for 10-bit opcodes
+    opcode = (instruction >> 24) & 0x1FF;
+    switch(opcode) {
+    }
+
+    // switch for 11-bit opcodes
+    opcode = (instruction >> 21) & 0x7FF;
     switch(opcode) {
         case 0b10001011000:  // ADD
         case 0b1001000100:  // ADDI
         case 0b10001010000:  // AND
         case 0b1001001000:  // ANDI
         case 0b000101:  // B
-        case 0b10110110001:  // B.cond
+        case 0b01010100:  // B.cond
         case 0b100101:  // BL
         case 0b11010110000:  // BR
         case 0b10110101:  // CBNZ
