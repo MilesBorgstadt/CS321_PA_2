@@ -117,14 +117,32 @@ bool getType(char *line, int instruction) {
     opcode = (instruction >> 21) & 0x7FF;
     switch(opcode) {
         case 0b10001011000:  // ADD
+            sprintf(line, "ADD %d", Rm, shamt, Rn, Rd);
+            return false;
         case 0b10001010000:  // AND
+            sprintf(line, "AND %d", Rm, shamt, Rn, Rd);
+            return false;
         case 0b11010110000:  // BR
+            sprintf(line, "BR %d", Rm, shamt, Rn, Rd);
+            return false;
         case 0b11001010000:  // EOR
+            sprintf(line, "EOR %d", Rm, shamt, Rn, Rd);
+            return false;
         case 0b11111000010:  // LDUR
+            sprintf(line, "LDUR %d", DTAdd, op, Rn, Rt);
+            return false;
         case 0b11010011011:  // LSL
+            sprintf(line, "LSL %d", Rm, shamt, Rn, Rd);
+            return false;
         case 0b11010011010:  // LSR
+            sprintf(line, "LSR %d", Rm, shamt, Rn, Rd);
+            return false;
         case 0b10101010000:  // ORR
+            sprintf(line, "ORR %d", Rm, shamt, Rn, Rd);
+            return false;
         case 0b11111000000:  // STUR
+            sprintf(line, "STUR %d", DTAdd, op, Rn, Rt);
+            return false;
         case 0b11001011000:  // SUB
         case 0b11101011000:  // SUBS
         case 0b11111111101:  // PRNT
