@@ -47,7 +47,7 @@ bool getType(char *line, int instruction) {
     }
 
     // switch for 10-bit opcodes
-    opcode = (instruction >> 24) & 0x1FF;
+    opcode = (instruction >> 22) & 0x3FF;
     switch(opcode) {
     }
 
