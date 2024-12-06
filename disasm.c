@@ -38,10 +38,10 @@ bool getType(char *line, int instruction) {
     // switch for 6-bit opcodes
     int opcode = (instruction >> 26) & 0x3F;
     switch(opcode) {
-        case 0b000101:
+        case 0b000101:      // B
             sprintf(line, "B %d", BAdd);
             return true;
-        case 0b100101:
+        case 0b100101:      // BL
             sprintf(line, "BL %d", BAdd);
             return true;
     }
@@ -50,8 +50,43 @@ bool getType(char *line, int instruction) {
     opcode = (instruction >> 24) & 0xFF;
     switch(opcode) {
         case 0b10110101:     // CBNZ
+            sprintf(line, "CBNZ X%d, %d", Rt, CBAdd);
+            return true;
         case 0b10110100:     // CBZ
+            sprintf(line, "CBZ X%d, %d", Rt, CBAdd);
+            return true;
         case 0b01010100:     // B.cond
+            int cond = instruction & 0x1F;
+            switch(cond) {
+                case 0:
+                    sprintf(line, "B.EQ %d", CBAdd);
+                case 1:
+                    sprintf(line, "B.NE %d", CBAdd);
+                case 2:
+                    sprintf(line, "B.HS %d", CBAdd);
+                case 3:
+                    sprintf(line, "B.LO %d", CBAdd);
+                case 4:
+                    sprintf(line, "B.MI %d", CBAdd);
+                case 5:
+                    sprintf(line, "B.PL %d", CBAdd);
+                case 6:
+                    sprintf(line, "B.VS %d", CBAdd);
+                case 7:
+                    sprintf(line, "B.VC %d", CBAdd);
+                case 8:
+                    sprintf(line, "B.HI %d", CBAdd);
+                case 9:
+                    sprintf(line, "B.LS %d", CBAdd);
+                case 10:
+                    sprintf(line, "B.GE %d", CBAdd);
+                case 11:
+                    sprintf(line, "B.LT %d", CBAdd);
+                case 12:
+                    sprintf(line, "B.GT %d", CBAdd);
+                case 13:
+                    sprintf(line, "B.LE %d", CBAdd);
+            }
             return true;   
     }
 
