@@ -94,11 +94,22 @@ bool getType(char *line, int instruction) {
     opcode = (instruction >> 22) & 0x3FF;
     switch(opcode) {
         case 0b1101000100:   // SUBI
+            sprintf(line, "SUBI X%d, X%d, #%d", Rd, Rn, ALUImm);
+            return false;
         case 0b1111000100:   // SUBIS
+            sprintf(line, "SUBIS X%d, X%d, #%d", Rd, Rn, ALUImm);
+            return false;
         case 0b1101001000:   // EORI
+            sprintf(line, "EORI X%d, X%d, #%d", Rd, Rn, ALUImm);
+            return false;
         case 0b1011001000:   // ORRI
+            sprintf(line, "ORRI X%d, X%d, #%d", Rd, Rn, ALUImm);
+            return false;
         case 0b1001000100:   // ADDI
+            sprintf(line, "ADDI X%d, X%d, #%d", Rd, Rn, ALUImm);
+            return false;
         case 0b1001001000:   // ANDI
+            sprintf(line, "ANDI X%d, X%d, #%d", Rd, Rn, ALUImm);
             return false;
     }
 
