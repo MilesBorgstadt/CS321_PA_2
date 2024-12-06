@@ -117,31 +117,35 @@ bool getType(char *line, int instruction) {
     opcode = (instruction >> 21) & 0x7FF;
     switch(opcode) {
         case 0b10001011000:  // ADD
-            sprintf(line, "ADD X%d, X%d, #%d", Rd, Rn, Rm);
+            sprintf(line, "ADD X%d, X%d, X%d", Rd, Rn, Rm);
             return false;
         case 0b10001010000:  // AND
-            sprintf(line, "AND X%d, X%d, #%d", Rd, Rn, Rm);
+            sprintf(line, "AND X%d, X%d, X%d", Rd, Rn, Rm);
             return false;
         case 0b11010110000:  // BR
-            sprintf(line, "BR X%d, X%d, #%d", Rd, Rn, Rm);
+            if (Rd == 30) {
+                sprintf(line, "BR LR");
+            } else {
+                sprintf(line, "BR X%d", Rd);
+            }
             return false;
         case 0b11001010000:  // EOR
-            sprintf(line, "EOR X%d, X%d, #%d", Rd, Rn, Rm);
+            sprintf(line, "EOR X%d, X%d, X%d", Rd, Rn, Rm);
             return false;
         case 0b11111000010:  // LDUR
-            sprintf(line, "LDUR X%d, X%d, #%d", DTAdd, op, Rn, Rt);
+            sprintf(line, "LDUR X%d, [X%d, #%d]", Rt, Rn, DTAdd);
             return false;
         case 0b11010011011:  // LSL
-            sprintf(line, "LSL X%d, X%d, #%d", Rm, shamt, Rn, Rd);
+            sprintf(line, "LSL X%d, X%d, X%d", Rd, Rn, Rm);
             return false;
         case 0b11010011010:  // LSR
-            sprintf(line, "LSR X%d, X%d, #%d", Rm, shamt, Rn, Rd);
+            sprintf(line, "LSR X%d, X%d, X%d", Rd, Rn, Rm);
             return false;
         case 0b10101010000:  // ORR
-            sprintf(line, "ORR X%d, X%d, #%d", Rm, shamt, Rn, Rd);
+            sprintf(line, "ORR X%d, X%d, X%d", Rd, Rn, Rm);
             return false;
         case 0b11111000000:  // STUR
-            sprintf(line, "STUR X%d, X%d, #%d", DTAdd, op, Rn, Rt);
+            sprintf(line, "STUR X%d, [X%d, #%d]", Rt, Rn, DTAdd);
             return false;
         case 0b11001011000:  // SUB
             sprintf(line, "SUB X%d, X%d, X%d", Rd, Rn, Rm);
