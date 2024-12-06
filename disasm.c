@@ -3,7 +3,7 @@
 #include <string.h>
 #include <stdbool.h>
 
-bool getType(char *line, int instruction) {
+bool getType(char *line, int instruction, int *branchAddress) {
     int Rm = (instruction >> 16) & 0x1F;
     int shamt = (instruction >> 10) & 0x3F;
     int Rn = (instruction >> 5) & 0x1F;
@@ -20,9 +20,11 @@ bool getType(char *line, int instruction) {
     switch(opcode) {
         case 0b000101:      // B
             sprintf(line, "B %d", BAdd);
+            *branchAddress = BAdd;  // Save the BAdd value
             return true;
         case 0b100101:      // BL
             sprintf(line, "BL %d", BAdd);
+            *branchAddress = BAdd;  // Save the BAdd value
             return true;
     }
 
@@ -31,9 +33,11 @@ bool getType(char *line, int instruction) {
     switch(opcode) {
         case 0b10110101:     // CBNZ
             sprintf(line, "CBNZ X%d, %d", Rt, CBAdd);
+            *branchAddress = CBAdd;  // Save the CBAdd value
             return true;
         case 0b10110100:     // CBZ
             sprintf(line, "CBZ X%d, %d", Rt, CBAdd);
+            *branchAddress = CBAdd;  // Save the CBAdd value
             return true;
         case 0b01010100:     // B.cond
             int cond = instruction & 0x1F;
@@ -67,6 +71,7 @@ bool getType(char *line, int instruction) {
                 case 13:
                     sprintf(line, "B.LE %d", CBAdd);
             }
+            *branchAddress = CBAdd;  // Save the CBAdd value
             return true;   
     }
 
@@ -157,13 +162,28 @@ int main(int argc, char *argv[]) {
     char *output;
     int instruction;
     
-    
+
+    //Find where the labels are at
+    while (!feof(file)) {
+        fread(&instruction, 4, 1, file);
+        instruction = be32toh(instruction);
+
+        int branchTargetLine = -1;  // Store the branch target address
+        char dummyLine[32];
+        if (getType(dummyLine, instruction, &branchTargetLine)) {
+            // Store what line the branch target is on
+        }
+    }
+
+    rewind(file);
+
     while (!feof(file)) {
         fread(&instruction, 4, 1, file);
         instruction = be32toh(instruction);
 
         char line[21];
-        bool branch = getType(line, instruction);
+        int branchAddress;
+        bool branch = getType(line, instruction, branchAddress);
         output = realloc(output, sizeof(output) + strlen(line));
         output = strcat(output, line);
 
