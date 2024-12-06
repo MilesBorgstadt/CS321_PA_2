@@ -144,8 +144,14 @@ bool getType(char *line, int instruction) {
             sprintf(line, "STUR %d", DTAdd, op, Rn, Rt);
             return false;
         case 0b11001011000:  // SUB
+            sprintf(line, "SUB X%d, X%d, X%d", Rd, Rn, Rm);
+            return false;
         case 0b11101011000:  // SUBS
+            sprintf(line, "SUBS X%d, X%d, X%d", Rd, Rn, Rm);
+            return false;
         case 0b11111111101:  // PRNT
+            sprintf(line, "PRNT X%d", Rd);
+            return false;
         case 0b11111111100:  // PRNL
         case 0b11111111110:  // DUMP
         case 0b11111111111:  // HALT
