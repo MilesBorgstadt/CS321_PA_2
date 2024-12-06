@@ -153,8 +153,13 @@ bool getType(char *line, int instruction) {
             sprintf(line, "PRNT X%d", Rd);
             return false;
         case 0b11111111100:  // PRNL
+            sprintf(line, "PRNL");
+            return false;
         case 0b11111111110:  // DUMP
+            sprintf(line, "SUB");
+            return false;
         case 0b11111111111:  // HALT
+            sprintf(line, "HALT");
             return false;
     }
 
