@@ -1,5 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
+#include <stdbool.h>
 
 int main(int argc, char *argv[]) {
     FILE *file;
@@ -8,15 +10,20 @@ int main(int argc, char *argv[]) {
     char *output;
     int instruction;
     
+    
     while (!feof(file)) {
         fread(&instruction, 4, 1, file);
         instruction = be32toh(instruction);
-        output = realloc(output, sizeof(output) + 4);
-        getType(instruction);
+
+        char line[21];
+        bool branch = getType(line, instruction);
+        output = realloc(output, sizeof(output) + strlen(line));
+        output = strcat(output, line);
+
     }
 }
 
-void getType(int instruction) {
+bool getType(char *line, int instruction) {
     int opcode = (instruction >> 26) & 0x3F;
 
     switch (opcode) {
