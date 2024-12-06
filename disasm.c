@@ -41,7 +41,7 @@ bool getType(char *line, int instruction) {
             break;
         case 0b1001000100: //ADDI
             break;
-        case 0b10001010000
+        case 0b10001010000:
         //etc... im adding those
         default:
             break;
