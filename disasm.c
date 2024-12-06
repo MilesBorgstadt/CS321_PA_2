@@ -37,12 +37,34 @@ bool getType(char *line, int instruction) {
     int CBAdd = (instruction >> 5) & 0x7FFFF;
 
     switch(opcode) {
-        case 0b10001011000: //ADD
+        case 0b10001011000:  // ADD
+        case 0b1001000100:  // ADDI
+        case 0b10001010000:  // AND
+        case 0b1001001000:  // ANDI
+        case 0b000101:  // B
+        case 0b10110110001:  // B.cond
+        case 0b100101:  // BL
+        case 0b11010110000:  // BR
+        case 0b10110101:  // CBNZ
+        case 0b10110100:  // CBZ
+        case 0b11001010000:  // EOR
+        case 0b1101001000: // EORI
+        case 0b11111000010:  // LDUR
+        case 0b11010011011:  // LSL
+        case 0b11010011010:  // LSR
+        case 0b10101010000:  // ORR
+        case 0b1011001000:  // ORRI
+        case 0b11111000000:  // STUR
+        case 0b11001011000:  // SUB
+        case 0b1101000100:  // SUBI
+        case 0b1111000100: // SUBIS
+        case 0b11101011000: // SUBS
+        // MUL
+        case 0b11111111101:  // PRNT
+        case 0b11111111100:  // PRNL
+        case 0b11111111110:  // DUMP
+        case 0b11111111111:  // HALT
             break;
-        case 0b1001000100: //ADDI
-            break;
-        case 0b10001010000:
-        //etc... im adding those
         default:
             break;
     }
