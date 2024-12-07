@@ -7,8 +7,8 @@
 #define MAX_LABELS 100
 
 typedef struct labelInfo {
-    int address;
     char *name;
+    int lineNumber;
 } Label;
 
 bool getType(char *line, int instruction, int *branchAddress) {
@@ -190,7 +190,7 @@ int main(int argc, char *argv[]) {
             // Store what line the branch target is on
             char name[MAX_LABEL_SIZE];
             sprintf(name, "Label %d:", lineNumber);
-            Label newLabel = {branchTargetLine + lineNumber, name};
+            Label newLabel = {name, lineNumber + be32toh(branchTargetLine)};
 
             // Add the label to the list
             labels[i++] = newLabel;
@@ -207,12 +207,24 @@ int main(int argc, char *argv[]) {
         fread(&instruction, 4, 1, file);
         instruction = be32toh(instruction);
 
+        //Check if there is a label at this line
+        for (int i = 0; i < MAX_LABELS; i++) {
+            if (labels[i].lineNumber == lineNumber) {
+                printf("%s\n", labels[i].name);
+                lineNumber++;
+                break;
+            }
+        }
+
         char line[21];
         int branchAddress;
-        bool branch = getType(line, instruction, branchAddress);
-        output = realloc(output, sizeof(output) + strlen(line));
-        output = strcat(output, line);
-
+        getType(line, instruction, branchAddress);
+        // Just change to print the line
+        // output = realloc(output, sizeof(output) + strlen(line));
+        // output = strcat(output, line);
+        printf("%s\n", line);
+        
+        lineNumber++;
     }
 
     // Free the memory #FreeMyBoyLabels
