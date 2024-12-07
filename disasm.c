@@ -221,9 +221,11 @@ int main(int argc, char *argv[]) {
 
     int labelIndex = 0;
 
+    
     while (!feof(file)) {
         fread(&instruction, 4, 1, file);
         instruction = be32toh(instruction);
+
 
         //Check if there is a label at this line
         for (int j = 0; j < numLabels; j++) {
@@ -239,13 +241,11 @@ int main(int argc, char *argv[]) {
         if(getType(line, instruction, &branchAddress)){
             char newLine[21]; 
             sscanf(line, "%s ", &newLine);
-            printf("%s %s \n", newLine, labels[labelIndex++].name);
+            printf("\t%s %s \n", newLine, labels[labelIndex++].name);
         } else {
-            printf("%s\n", line);
+            printf("\t%s\n", line);
         }
 
-        // getType(line, instruction, &branchAddress);
-        // printf("\t%d %s\n", lineNumber, line);
         // Just change to print the line
         // output = realloc(output, sizeof(output) + strlen(line));
         // output = strcat(output, line);
