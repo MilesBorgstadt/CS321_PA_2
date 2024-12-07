@@ -1,1 +1,1 @@
-./build.sh $1
+./disasm $1
