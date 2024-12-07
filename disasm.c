@@ -27,11 +27,11 @@ bool getType(char *line, int instruction, int *branchAddress) {
     int opcode = (instruction >> 26) & 0x3F;
     switch(opcode) {
         case 0b000101:      // B
-            sprintf(line, "B %d", BAdd);
+            sprintf(line, "B %d", be32toh(BAdd));
             *branchAddress = BAdd;  // Save the BAdd value
             return true;
         case 0b100101:      // BL
-            sprintf(line, "BL %d", BAdd);
+            sprintf(line, "BL %d", be32toh(BAdd));
             *branchAddress = BAdd;  // Save the BAdd value
             return true;
     }
@@ -40,44 +40,44 @@ bool getType(char *line, int instruction, int *branchAddress) {
     opcode = (instruction >> 24) & 0xFF;
     switch(opcode) {
         case 0b10110101:     // CBNZ
-            sprintf(line, "CBNZ X%d, %d", Rt, CBAdd);
+            sprintf(line, "CBNZ X%d, %d", Rt, be32toh(CBAdd));
             *branchAddress = CBAdd;  // Save the CBAdd value
             return true;
         case 0b10110100:     // CBZ
-            sprintf(line, "CBZ X%d, %d", Rt, CBAdd);
+            sprintf(line, "CBZ X%d, %d", Rt, be32toh(CBAdd));
             *branchAddress = CBAdd;  // Save the CBAdd value
             return true;
         case 0b01010100:     // B.cond
             int cond = instruction & 0x1F;
             switch(cond) {
                 case 0:
-                    sprintf(line, "B.EQ %d", CBAdd);
+                    sprintf(line, "B.EQ %d",  be32toh(CBAdd));
                 case 1:
-                    sprintf(line, "B.NE %d", CBAdd);
+                    sprintf(line, "B.NE %d", be32toh(CBAdd));
                 case 2:
-                    sprintf(line, "B.HS %d", CBAdd);
+                    sprintf(line, "B.HS %d",  be32toh(CBAdd));
                 case 3:
-                    sprintf(line, "B.LO %d", CBAdd);
+                    sprintf(line, "B.LO %d",  be32toh(CBAdd));
                 case 4:
-                    sprintf(line, "B.MI %d", CBAdd);
+                    sprintf(line, "B.MI %d",  be32toh(CBAdd));
                 case 5:
-                    sprintf(line, "B.PL %d", CBAdd);
+                    sprintf(line, "B.PL %d",  be32toh(CBAdd));
                 case 6:
-                    sprintf(line, "B.VS %d", CBAdd);
+                    sprintf(line, "B.VS %d",  be32toh(CBAdd));
                 case 7:
-                    sprintf(line, "B.VC %d", CBAdd);
+                    sprintf(line, "B.VC %d",  be32toh(CBAdd));
                 case 8:
-                    sprintf(line, "B.HI %d", CBAdd);
+                    sprintf(line, "B.HI %d",  be32toh(CBAdd));
                 case 9:
-                    sprintf(line, "B.LS %d", CBAdd);
+                    sprintf(line, "B.LS %d",  be32toh(CBAdd));
                 case 10:
-                    sprintf(line, "B.GE %d", CBAdd);
+                    sprintf(line, "B.GE %d",  be32toh(CBAdd));
                 case 11:
-                    sprintf(line, "B.LT %d", CBAdd);
+                    sprintf(line, "B.LT %d",  be32toh(CBAdd));
                 case 12:
-                    sprintf(line, "B.GT %d", CBAdd);
+                    sprintf(line, "B.GT %d",  be32toh(CBAdd));
                 case 13:
-                    sprintf(line, "B.LE %d", CBAdd);
+                    sprintf(line, "B.LE %d",  be32toh(CBAdd));
             }
             *branchAddress = CBAdd;  // Save the CBAdd value
             return true;   
