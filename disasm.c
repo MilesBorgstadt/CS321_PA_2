@@ -7,7 +7,7 @@
 #define MAX_LABELS 100
 
 typedef struct labelInfo {
-    char *name;
+    char name[MAX_LABEL_SIZE];
     int lineNumber;
 } Label;
 
@@ -23,15 +23,24 @@ bool getType(char *line, int instruction, int *branchAddress) {
     int BAdd = instruction & 0x3FFFFFF;
     int CBAdd = (instruction >> 5) & 0x7FFFF;
 
+
+    // Check if the BAdd is negative
+    if (((BAdd >> 25) & 0x1)) {
+			BAdd = -(((BAdd ^ 0xFFFFFF) + 1) & 0xFFFFFF);
+	}
+       if (((CBAdd >> 25) & 0x1)) {
+			CBAdd = -(((CBAdd ^ 0xFFFFFF) + 1) & 0xFFFFFF);
+	}
+
     // switch for 6-bit opcodes
     int opcode = (instruction >> 26) & 0x3F;
     switch(opcode) {
         case 0b000101:      // B
-            sprintf(line, "B %d", be32toh(BAdd));
+            sprintf(line, "B %d", BAdd);
             *branchAddress = BAdd;  // Save the BAdd value
             return true;
         case 0b100101:      // BL
-            sprintf(line, "BL %d", be32toh(BAdd));
+            sprintf(line, "BL %d", BAdd);
             *branchAddress = BAdd;  // Save the BAdd value
             return true;
     }
@@ -40,44 +49,44 @@ bool getType(char *line, int instruction, int *branchAddress) {
     opcode = (instruction >> 24) & 0xFF;
     switch(opcode) {
         case 0b10110101:     // CBNZ
-            sprintf(line, "CBNZ X%d, %d", Rt, be32toh(CBAdd));
+            sprintf(line, "CBNZ X%d, %d", Rt, CBAdd);
             *branchAddress = CBAdd;  // Save the CBAdd value
             return true;
         case 0b10110100:     // CBZ
-            sprintf(line, "CBZ X%d, %d", Rt, be32toh(CBAdd));
+            sprintf(line, "CBZ X%d, %d", Rt, CBAdd);
             *branchAddress = CBAdd;  // Save the CBAdd value
             return true;
         case 0b01010100:     // B.cond
             int cond = instruction & 0x1F;
             switch(cond) {
                 case 0:
-                    sprintf(line, "B.EQ %d",  be32toh(CBAdd));
+                    sprintf(line, "B.EQ %d",  CBAdd);
                 case 1:
-                    sprintf(line, "B.NE %d", be32toh(CBAdd));
+                    sprintf(line, "B.NE %d", CBAdd);
                 case 2:
-                    sprintf(line, "B.HS %d",  be32toh(CBAdd));
+                    sprintf(line, "B.HS %d",  CBAdd);
                 case 3:
-                    sprintf(line, "B.LO %d",  be32toh(CBAdd));
+                    sprintf(line, "B.LO %d",  CBAdd);
                 case 4:
-                    sprintf(line, "B.MI %d",  be32toh(CBAdd));
+                    sprintf(line, "B.MI %d",  CBAdd);
                 case 5:
-                    sprintf(line, "B.PL %d",  be32toh(CBAdd));
+                    sprintf(line, "B.PL %d",  CBAdd);
                 case 6:
-                    sprintf(line, "B.VS %d",  be32toh(CBAdd));
+                    sprintf(line, "B.VS %d",  CBAdd);
                 case 7:
-                    sprintf(line, "B.VC %d",  be32toh(CBAdd));
+                    sprintf(line, "B.VC %d",  CBAdd);
                 case 8:
-                    sprintf(line, "B.HI %d",  be32toh(CBAdd));
+                    sprintf(line, "B.HI %d",  CBAdd);
                 case 9:
-                    sprintf(line, "B.LS %d",  be32toh(CBAdd));
+                    sprintf(line, "B.LS %d",  CBAdd);
                 case 10:
-                    sprintf(line, "B.GE %d",  be32toh(CBAdd));
+                    sprintf(line, "B.GE %d",  CBAdd);
                 case 11:
-                    sprintf(line, "B.LT %d",  be32toh(CBAdd));
+                    sprintf(line, "B.LT %d",  CBAdd);
                 case 12:
-                    sprintf(line, "B.GT %d",  be32toh(CBAdd));
+                    sprintf(line, "B.GT %d",  CBAdd);
                 case 13:
-                    sprintf(line, "B.LE %d",  be32toh(CBAdd));
+                    sprintf(line, "B.LE %d",  CBAdd);
             }
             *branchAddress = CBAdd;  // Save the CBAdd value
             return true;   
@@ -153,7 +162,7 @@ bool getType(char *line, int instruction, int *branchAddress) {
             sprintf(line, "PRNL");
             return false;
         case 0b11111111110:  // DUMP
-            sprintf(line, "SUB");
+            sprintf(line, "DUMP");
             return false;
         case 0b11111111111:  // HALT
             sprintf(line, "HALT");
@@ -182,6 +191,7 @@ int main(int argc, char *argv[]) {
     labels = malloc(sizeof(Label) * MAX_LABELS);
 
     int i = 0;
+    int numLabels = 0;
     //Find where the labels are at
     while (!feof(file)) {
         fread(&instruction, 4, 1, file);
@@ -192,11 +202,14 @@ int main(int argc, char *argv[]) {
         if (getType(dummyLine, instruction, &branchTargetLine)) {
             // Store what line the branch target is on
             char name[MAX_LABEL_SIZE];
-            sprintf(name, "Label %d:", lineNumber);
-            Label newLabel = {name, lineNumber + be32toh(branchTargetLine)};
+            sprintf(name, "label_%d", i);
+            Label newLabel; 
+            strcpy(newLabel.name, name);
+            newLabel.lineNumber = lineNumber + branchTargetLine;
 
             // Add the label to the list
             labels[i++] = newLabel;
+            numLabels++;
 
         }
         lineNumber++;
@@ -206,26 +219,36 @@ int main(int argc, char *argv[]) {
     rewind(file);
     lineNumber = 1;
 
+    int labelIndex = 0;
+
     while (!feof(file)) {
         fread(&instruction, 4, 1, file);
         instruction = be32toh(instruction);
 
         //Check if there is a label at this line
-        for (int i = 0; i < MAX_LABELS; i++) {
-            if (labels[i].lineNumber == lineNumber) {
-                printf("%s\n", labels[i].name);
-                lineNumber++;
+        for (int j = 0; j < numLabels; j++) {
+            if (labels[j].lineNumber == lineNumber) {
+                printf("%s:\n", labels[j].name);
                 break;
             }
         }
 
         char line[21];
         int branchAddress;
-        getType(line, instruction, &branchAddress);
+
+        if(getType(line, instruction, &branchAddress)){
+            char newLine[21]; 
+            sscanf(line, "%s ", &newLine);
+            printf("%s %s \n", newLine, labels[labelIndex++].name);
+        } else {
+            printf("%s\n", line);
+        }
+
+        // getType(line, instruction, &branchAddress);
+        // printf("\t%d %s\n", lineNumber, line);
         // Just change to print the line
         // output = realloc(output, sizeof(output) + strlen(line));
         // output = strcat(output, line);
-        printf("%s\n", line);
         
         lineNumber++;
     }
