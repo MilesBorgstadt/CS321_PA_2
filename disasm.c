@@ -221,7 +221,7 @@ int main(int argc, char *argv[]) {
 
         char line[21];
         int branchAddress;
-        getType(line, instruction, branchAddress);
+        getType(line, instruction, &branchAddress);
         // Just change to print the line
         // output = realloc(output, sizeof(output) + strlen(line));
         // output = strcat(output, line);
