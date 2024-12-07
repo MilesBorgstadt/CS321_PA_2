@@ -167,9 +167,12 @@ int main(int argc, char *argv[]) {
     FILE *file;
     file = fopen(argv[1], "rb");
 
-    char *output;
+    if (file == NULL) {
+        printf("File not found\n");
+        return 1;
+    }
+    
     int instruction;
-
     
     //Keep track of the line number
     int lineNumber = 1;
